@@ -47,12 +47,22 @@ namespace ConsoleUI
             //---------------------------------------------------------------------------------
 
 
-
-            CarTest();
+            DtoTest();
+            //CarTest();
             //BrandTest();
             //ColorTest();
-            
 
+
+        }
+
+        private static void DtoTest()
+        {
+            CarManager carManager = new CarManager(new EfCarDal());
+
+            foreach (var car in carManager.GetCarDetails())
+            {
+                Console.WriteLine("Araba Adı:{0} / Marka Adı:{1} / Renk Adı:{2} / Kiralama Ücreti:{3}", car.Description, car.BrandName, car.ColorName, car.DailyPrice);
+            }
         }
 
         private static void ColorTest()

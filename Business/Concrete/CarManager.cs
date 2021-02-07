@@ -2,6 +2,7 @@
 using DataAccess.Abstract;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,6 +68,11 @@ namespace Business.Concrete
         public List<Car> GetByModelYear(string year)
         {
             return _carDal.GetAll(c => c.ModelYear.Contains(year) == true);
+        }
+
+        public List<CarDetailDto> GetCarDetails()
+        {
+            return _carDal.GetCarDetails();
         }
 
         public void Update(Car car)
