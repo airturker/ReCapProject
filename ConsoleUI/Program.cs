@@ -9,7 +9,7 @@ using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
 
-namespace ConsoleUI
+namespace ReCapProject.ConsoleUI
 {
     public class Program
     {
