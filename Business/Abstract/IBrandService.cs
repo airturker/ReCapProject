@@ -1,18 +1,13 @@
-﻿using Entities.Concrete;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Core.Business;
+using Entities.Concrete;
 
 namespace Business.Abstract
 {
-    public interface IBrandService
+    public interface IBrandService : ICrudServices<Brand>
     {
-        void Add(Brand brand);
-        void Update(Brand brand);
-        void Delete(Brand brand);
-        List<Brand> GetAll();
-
-        Brand GetById(int id);
 
     }
 }

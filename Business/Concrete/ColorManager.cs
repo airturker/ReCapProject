@@ -1,45 +1,58 @@
-﻿using Business.Abstract;
-using DataAccess.Abstract;
-using Entities.Concrete;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
+using DataAccess.Abstract;
+using Entities.Concrete;
 
 namespace Business.Concrete
 {
     public class ColorManager : IColorService
     {
-        IColorDal _colorDal;
+        private IColorDal _colorDal;
+        private int hour = 04;
 
-        public ColorManager(IColorDal brandDal)
+        public ColorManager(IColorDal colorDal)
         {
-            _colorDal = brandDal;
+            _colorDal = colorDal;
         }
 
-        public void Add(Color entity)
+        public IDataResult<List<Color>> GetAllService()
+        {
+            if (DateTime.Now.Hour == hour)
+            {
+                return new ErrorDataResult<List<Color>>(GeneralMessages.Maintenance);
+            }
+            return new SuccessDataResult<List<Color>>(_colorDal.GetAll(), ColorMessages.ColorsListed);
+        }
+
+        public IDataResult<Color> GetById(int id)
+        {
+            if (DateTime.Now.Hour == hour)
+            {
+                return new ErrorDataResult<Color>(GeneralMessages.Maintenance);
+            }
+            return new SuccessDataResult<Color>(_colorDal.Get(c => c.ColorId == id), ColorMessages.ColorsListed);
+        }
+
+        public IResult AddService(Color entity)
         {
             _colorDal.Add(entity);
+            return new SuccessResult(ColorMessages.ColorAdded);
         }
 
-        public void Delete(Color color)
-        {
-            _colorDal.Delete(color);
-        }
-
-        public List<Color> GetAll()
-        {
-            return _colorDal.GetAll();
-
-        }
-
-        public Color GetById(int id)
-        {
-            return _colorDal.Get(c => c.ColorId == id);
-        }
-
-        public void Update(Color entity)
+        public IResult UpdateService(Color entity)
         {
             _colorDal.Update(entity);
+            return new SuccessResult(ColorMessages.ColorUpdated);
+        }
+
+        public IResult DeleteService(Color entity)
+        {
+            _colorDal.Delete(entity);
+            return new SuccessResult(ColorMessages.ColorDeleted);
         }
     }
 }

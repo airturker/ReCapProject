@@ -3,6 +3,7 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -11,30 +12,36 @@ namespace DataAccess.Concrete.InMemory
 {
     public class InMemoryCarDal : ICarDal
     {
-        List<Car> _cars;
+        private List<Car> _cars;
         public InMemoryCarDal()
         {
-            _cars = new List<Car> {
-            new Car { CarId = 1, BrandId = 1, ColorId = 1, DailyPrice = 150, Descriptions = "BMW" },
-            new Car { CarId = 2, BrandId = 1, ColorId = 1, DailyPrice = 200, Descriptions = "AUDI" },
-            new Car { CarId = 3, BrandId = 1, ColorId = 2, DailyPrice = 300, Descriptions = "MERCEDES" }
+            _cars = new List<Car>
+            {
+                new Car() {CarId = 1, BrandId = 1, ColorId = 1, DailyPrice = 118750, ModelYear = 2013,
+                    Descriptions = "DEĞİŞENSİZ TRAMERSİZ 2 PARÇA BOYALI RENAULT CLIO"},
+                new Car() {CarId = 2, BrandId = 1, ColorId = 1, DailyPrice = 184000, ModelYear = 2019,
+                    Descriptions = "HATASIZ BOYASIZ TESLA EKRANLI ÇELİK JANTLI RENAULT MEGANE"},
+                new Car() {CarId = 3, BrandId = 1, ColorId = 2, DailyPrice =42000, ModelYear = 1992,
+                    Descriptions = "OTOMATİK KLİMALI CLIO"},
+                new Car() {CarId = 4, BrandId = 2, ColorId = 3, DailyPrice = 98500, ModelYear = 2009,
+                    Descriptions = "DOĞAN OTOMOTİVDEN SUNROOF DEĞİŞENSİZ HASAR KAYITSIZ CITROEN C5"},
+                new Car() {CarId = 5, BrandId = 2, ColorId = 4, DailyPrice = 208000, ModelYear = 2020,
+                    Descriptions = "Sahibinden tertemiz c3"}
 
-           };
-
+            };
         }
-        public void Add(Car car)
+        public List<Car> GetByBrandId(int brandId) => _cars.Where(p => p.BrandId == brandId).ToList();
+
+
+        public Car Get(int id)
         {
-
-            _cars.Add(car);
-
+            return _cars.SingleOrDefault(p => p.CarId == id);
         }
 
-        public void Delete(Car car)
+
+        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
         {
-            //LINQ
-            
-            Car carToDelete = _cars.SingleOrDefault(c => c.CarId == car.CarId);
-            _cars.Remove(carToDelete);
+            return _cars;
         }
 
         public Car Get(Expression<Func<Car, bool>> filter)
@@ -42,19 +49,21 @@ namespace DataAccess.Concrete.InMemory
             throw new NotImplementedException();
         }
 
-        public List<Car> GetAll()
+        public void Add(Car car)
         {
-            return _cars;
+            if (_cars.SingleOrDefault(p => p.CarId == car.CarId) == null)
+            {
+                _cars.Add(car);
+            }
+            else
+            {
+                throw new WarningException("\nSistemde bu ID ile araç tanımlanmıştır, lütfen başka bir ID seçiniz.\n");
+            }
         }
-
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
+        public void Delete(Car car)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<Car> GetById(int Id)
-        {
-            return _cars.Where(c => c.CarId == Id).ToList();
+            var carToDelete = _cars.SingleOrDefault(p => p.CarId == car.CarId);
+            _cars.Remove(carToDelete);
         }
 
         public List<CarDetailDto> GetCarDetails()
@@ -64,14 +73,26 @@ namespace DataAccess.Concrete.InMemory
 
         public void Update(Car car)
         {
-            //LINQ
-            Car carToUpdate = _cars.SingleOrDefault(c => c.CarId == car.CarId);
-            carToUpdate.ColorId = car.ColorId;
-            carToUpdate.BrandId = car.BrandId;
-            carToUpdate.DailyPrice = car.DailyPrice;
-            carToUpdate.Descriptions = car.Descriptions;
-            carToUpdate.ModelYear = car.ModelYear;
+            var carToUpdate = _cars.SingleOrDefault(p => p.CarId == car.CarId);
+            var properties = car.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                if (prop.GetValue(car) != null)
+                {
+                    prop.SetValue(carToUpdate, prop.GetValue(car));
+                }
+            }
+        }
 
+
+        public List<CarDetailDto> GetCarDetails(Expression<Func<CarDetailDto, bool>> filter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CarDetailDto GetCarDetailsById(Expression<Func<CarDetailDto, bool>> filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }
