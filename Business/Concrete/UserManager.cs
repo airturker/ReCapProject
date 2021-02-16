@@ -11,48 +11,39 @@ namespace Business.Concrete
 {
     public class UserManager : IUserService
     {
-        private IUserDal _userDal;
-        private int hour = 03;
+        IUserDal _userDal;
 
         public UserManager(IUserDal userDal)
         {
             _userDal = userDal;
         }
 
-        public IDataResult<List<User>> GetAllService()
+        public IResult Add(User user)
         {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<List<User>>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<List<User>>(_userDal.GetAll(), UserMessages.UserListed);
+            _userDal.Add(user);
+            return new SuccessResult(UserMessages.AddedUser);
+        }
+
+        public IResult Delete(User user)
+        {
+            _userDal.Delete(user);
+            return new SuccessResult(UserMessages.DeletedUser);
+        }
+
+        public IDataResult<List<User>> GetAll()
+        {
+            return new SuccessDataResult<List<User>>(_userDal.GetAll());
         }
 
         public IDataResult<User> GetById(int id)
         {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<User>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id), UserMessages.UserListed);
+            return new SuccessDataResult<User>(_userDal.Get(I => I.UserId == id));
         }
 
-        public IResult AddService(User entity)
+        public IResult Update(User user)
         {
-            _userDal.Add(entity);
-            return new SuccessResult(UserMessages.UserAdded);
-        }
-
-        public IResult UpdateService(User entity)
-        {
-            _userDal.Update(entity);
-            return new SuccessResult(UserMessages.UserUpdated);
-        }
-
-        public IResult DeleteService(User entity)
-        {
-            _userDal.Delete(entity);
-            return new SuccessResult(UserMessages.UserDeleted);
+            _userDal.Update(user);
+            return new SuccessResult(UserMessages.UpdatedUser);
         }
     }
 }

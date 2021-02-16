@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using Business.Abstract;
 using Business.Constants;
@@ -13,70 +14,60 @@ namespace Business.Concrete
 {
     public class CarManager : ICarService
     {
-        private int hour = 03;
-        private ICarDal _carDal;
+        ICarDal _carDal;
+
         public CarManager(ICarDal carDal)
         {
             _carDal = carDal;
         }
-        public IDataResult<List<Car>> GetAllService()
+
+        public IResult Add(Car car)
         {
-            if (DateTime.Now.Hour == hour)
+            if (car.DailyPrice > 0)
             {
-                return new ErrorDataResult<List<Car>>(GeneralMessages.Maintenance);
+                _carDal.Add(car);
+                return new SuccessResult(CarMessages.AddedCar);
             }
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), CarMessages.CarsListed);
+            else
+            {
+                return new ErrorResult(CarMessages.FailedCarAddOrUpdate);
+            }
+        }
+
+        public IResult Delete(Car car)
+        {
+
+            _carDal.Delete(car);
+            return new SuccessResult(CarMessages.DeletedCar);
+
+        }
+
+        public IDataResult<List<Car>> GetAll()
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll());
         }
 
         public IDataResult<Car> GetById(int id)
         {
-            if (DateTime.Now.Hour == hour)
+            return new SuccessDataResult<Car>(_carDal.Get(c => c.CarId == id));
+        }
+        public IDataResult<List<CarDetailDto>> GetCarDetails(Expression<Func<Car, bool>> filter = null)
+        {
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(filter));
+
+        }
+
+        public IResult Update(Car car)
+        {
+            if (car.DailyPrice > 0)
             {
-                return new ErrorDataResult<Car>(GeneralMessages.Maintenance);
+                _carDal.Update(car);
+                return new SuccessResult(CarMessages.UpdatedCar);
             }
-            return new SuccessDataResult<Car>(_carDal.Get(p => p.CarId == id), CarMessages.CarsListed);
-
-        }
-
-        public IResult AddService(Car entity)
-        {
-
-            if (entity.Descriptions.Length <= 2 || entity.DailyPrice < 0)
+            else
             {
-                return new ErrorResult(CarMessages.CarAddError);
+                return new ErrorResult(CarMessages.FailedCarAddOrUpdate);
             }
-            _carDal.Add(entity);
-            return new SuccessResult(CarMessages.CarAdded);
-        }
-
-        public IResult UpdateService(Car entity)
-        {
-            _carDal.Update(entity);
-            return new SuccessResult(CarMessages.CarUpdated);
-        }
-
-        public IResult DeleteService(Car entity)
-        {
-            _carDal.Delete(entity);
-            return new SuccessResult(CarMessages.CarDeleted);
-        }
-
-        public IDataResult<List<CarDetailDto>> GetCarDetailsService()
-        {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<List<CarDetailDto>>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(), CarMessages.CarsListed);
-        }
-
-        public IDataResult<CarDetailDto> GetCarDetailsByIdService(int id)
-        {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<CarDetailDto>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<CarDetailDto>(_carDal.GetCarDetailsById(c => c.CarId == id), CarMessages.CarsListed);
         }
     }
 }

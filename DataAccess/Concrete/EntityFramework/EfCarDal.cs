@@ -12,42 +12,27 @@ using System.Text;
 namespace DataAccess.Concrete.EntityFramework
 {
     public class EfCarDal : EfEntityRepositoryBase<Car, CarRentalDbContext>, ICarDal
+{
+    public List<CarDetailDto> GetCarDetails(Expression<Func<Car, bool>> filter = null)
     {
-        public List<CarDetailDto> GetCarDetails(Expression<Func<CarDetailDto, bool>> filter = null)
+        using (CarRentalDbContext context = new CarRentalDbContext())
         {
-            using (CarRentalDbContext context = new CarRentalDbContext())
-            {
-                var result = from c in context.Cars
-                             join b in context.Brands on c.BrandId equals b.BrandId
-                             join r in context.Colors on c.ColorId equals r.ColorId
-                             select new CarDetailDto()
-                             {
-                                 CarId = c.CarId,
-                                 BrandName = b.BrandName,
-                                 DailyPrice = c.DailyPrice,
-                                 ColorName = r.ColorName,
-                                 Description = c.Descriptions
-                             };
-                return result.ToList();
-            }
-        }
-        public CarDetailDto GetCarDetailsById(Expression<Func<CarDetailDto, bool>> filter)
-        {
-            using (CarRentalDbContext context = new CarRentalDbContext())
-            {
-                var result = from c in context.Cars
-                             join b in context.Brands on c.BrandId equals b.BrandId
-                             join r in context.Colors on c.ColorId equals r.ColorId
-                             select new CarDetailDto()
-                             {
-                                 CarId = c.CarId,
-                                 BrandName = b.BrandName,
-                                 DailyPrice = c.DailyPrice,
-                                 ColorName = r.ColorName,
-                                 Description = c.Descriptions
-                             };
-                return result.SingleOrDefault(filter);
-            }
+            var result = from c in filter == null ? context.Cars : context.Cars.Where(filter)
+                         join co in context.Colors
+                         on c.ColorId equals co.ColorId
+                         join b in context.Brands
+                         on c.BrandId equals b.BrandId
+                         select new CarDetailDto
+                         {
+                             CarId = c.CarId,
+                             BrandName = b.BrandName,
+                             ColorName = co.ColorName,
+                             DailyPrice = c.DailyPrice,
+                             Descriptions = c.Descriptions,
+                             ModelYear = c.ModelYear
+                         };
+            return result.ToList();
         }
     }
+}
 }

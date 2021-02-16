@@ -12,48 +12,48 @@ namespace Business.Concrete
 {
     public class BrandManager : IBrandService
     {
-        private IBrandDal _brandDal;
-        private int hour = 03;
+        IBrandDal _brandDal;
+
         public BrandManager(IBrandDal brandDal)
         {
             _brandDal = brandDal;
         }
 
-        public IDataResult<List<Brand>> GetAllService()
+
+        public IResult Add(Brand brand)
         {
-            if (DateTime.Now.Hour == hour)
+            if (brand.BrandName.Length > 2)
             {
-                return new ErrorDataResult<List<Brand>>(GeneralMessages.Maintenance);
+                _brandDal.Add(brand);
+                return new SuccessResult(BrandMessages.AddedBrand);
             }
-            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(), BrandMessages.BrandListed);
+            return new ErrorResult(BrandMessages.FailedBrandAddOrUpdate);
+        }
+
+        public IResult Delete(Brand brand)
+        {
+            _brandDal.Delete(brand);
+            return new SuccessResult(BrandMessages.DeletedBrand);
+        }
+
+        public IDataResult<List<Brand>> GetAll()
+        {
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
         }
 
         public IDataResult<Brand> GetById(int id)
         {
-            if (DateTime.Now.Hour == hour)
+            return new SuccessDataResult<Brand>(_brandDal.Get(c => c.BrandId == id));
+        }
+
+        public IResult Update(Brand brand)
+        {
+            if (brand.BrandName.Length > 2)
             {
-                return new ErrorDataResult<Brand>(GeneralMessages.Maintenance);
+                _brandDal.Update(brand);
+                return new SuccessResult(BrandMessages.UpdatedBrand);
             }
-            return new SuccessDataResult<Brand>(_brandDal.Get(p => p.BrandId == id), BrandMessages.BrandListed);
-
-        }
-
-        public IResult AddService(Brand entity)
-        {
-            _brandDal.Add(entity);
-            return new SuccessResult(BrandMessages.BrandAdded);
-        }
-
-        public IResult UpdateService(Brand entity)
-        {
-            _brandDal.Update(entity);
-            return new SuccessResult(BrandMessages.BrandUpdated);
-        }
-
-        public IResult DeleteService(Brand entity)
-        {
-            _brandDal.Delete(entity);
-            return new SuccessResult(BrandMessages.BrandDeleted);
+            return new ErrorResult(BrandMessages.FailedBrandAddOrUpdate);
         }
     }
 }

@@ -11,48 +11,39 @@ namespace Business.Concrete
 {
     public class CustomerManager : ICustomerService
     {
-        private ICustomerDal _customerDal;
-        private int hour = 03;
+        ICustomerDal _customerDal;
 
         public CustomerManager(ICustomerDal customerDal)
         {
             _customerDal = customerDal;
         }
 
-        public IDataResult<List<Customer>> GetAllService()
+        public IResult Add(Customer customer)
         {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<List<Customer>>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(), CustomerMessages.CustomersListed);
+            _customerDal.Add(customer);
+            return new SuccessResult(CustomerMessages.AddedCustomer);
+        }
+
+        public IResult Delete(Customer customer)
+        {
+            _customerDal.Delete(customer);
+            return new SuccessResult(CustomerMessages.DeletedCustomer);
+        }
+
+        public IDataResult<List<Customer>> GetAll()
+        {
+            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll());
         }
 
         public IDataResult<Customer> GetById(int id)
         {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<Customer>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<Customer>(_customerDal.Get(c => c.Id == id), CustomerMessages.CustomersListed); ;
+            return new SuccessDataResult<Customer>(_customerDal.Get(c => c.CustomerId == id));
         }
 
-        public IResult AddService(Customer entity)
+        public IResult Update(Customer customer)
         {
-            _customerDal.Add(entity);
-            return new SuccessResult(CustomerMessages.CustomerAdded);
-        }
-
-        public IResult UpdateService(Customer entity)
-        {
-            _customerDal.Update(entity);
-            return new SuccessResult(CustomerMessages.CustomerUpdated);
-        }
-
-        public IResult DeleteService(Customer entity)
-        {
-            _customerDal.Delete(entity);
-            return new SuccessResult(CustomerMessages.CustomerDeleted);
+            _customerDal.Update(customer);
+            return new SuccessResult(CustomerMessages.UpdatedCustomer);
         }
     }
 }

@@ -12,7 +12,7 @@ CREATE TABLE Cars(
 CarId int primary key identity(1,1),
 BrandId int,
 ColorId int,
-ModelYear nvarchar(20),
+ModelYear int,
 DailyPrice decimal,
 Descriptions nvarchar(50),
 foreign key(ColorId) References Colors(ColorId),

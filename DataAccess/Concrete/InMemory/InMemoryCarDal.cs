@@ -10,89 +10,61 @@ using System.Text;
 
 namespace DataAccess.Concrete.InMemory
 {
-    public class InMemoryCarDal : ICarDal
+    //public class InMemoryCarDal : ICarDal
+    public class InMemoryCarDal
     {
-        private List<Car> _cars;
-        public InMemoryCarDal()
-        {
-            _cars = new List<Car>
-            {
-                new Car() {CarId = 1, BrandId = 1, ColorId = 1, DailyPrice = 118750, ModelYear = 2013,
-                    Descriptions = "DEĞİŞENSİZ TRAMERSİZ 2 PARÇA BOYALI RENAULT CLIO"},
-                new Car() {CarId = 2, BrandId = 1, ColorId = 1, DailyPrice = 184000, ModelYear = 2019,
-                    Descriptions = "HATASIZ BOYASIZ TESLA EKRANLI ÇELİK JANTLI RENAULT MEGANE"},
-                new Car() {CarId = 3, BrandId = 1, ColorId = 2, DailyPrice =42000, ModelYear = 1992,
-                    Descriptions = "OTOMATİK KLİMALI CLIO"},
-                new Car() {CarId = 4, BrandId = 2, ColorId = 3, DailyPrice = 98500, ModelYear = 2009,
-                    Descriptions = "DOĞAN OTOMOTİVDEN SUNROOF DEĞİŞENSİZ HASAR KAYITSIZ CITROEN C5"},
-                new Car() {CarId = 5, BrandId = 2, ColorId = 4, DailyPrice = 208000, ModelYear = 2020,
-                    Descriptions = "Sahibinden tertemiz c3"}
+        //List<Car> _cars;
 
-            };
-        }
-        public List<Car> GetByBrandId(int brandId) => _cars.Where(p => p.BrandId == brandId).ToList();
+        //public InMemoryCarDal()
+        //{
+        //    _cars = new List<Car>()
+        //    {
+        //        new Car{Id= 1, BrandId = 1, ColorId = 1, DailyPrice = 200, ModelYear = "2012", Descriptions = "Otomatik Dizel" },    
+        //        new Car{Id= 2, BrandId = 2, ColorId = 2, DailyPrice = 50, ModelYear = "2010", Descriptions = "Manuel Benzin" },
+        //        new Car{Id= 3, BrandId = 2, ColorId = 1, DailyPrice = 100, ModelYear = "2019", Descriptions = "Manuel Dizel" },
+        //        new Car{Id= 4, BrandId = 3, ColorId = 2, DailyPrice = 150, ModelYear = "2018", Descriptions = "Otomatik Benzin" },
+        //    };
+        //}
 
+        //public void Add(Car car)
+        //{
+        //    _cars.Add(car);
+        //}
 
-        public Car Get(int id)
-        {
-            return _cars.SingleOrDefault(p => p.CarId == id);
-        }
+        //public void Delete(int id)
+        //{
+        //    Car carToDelete = _cars.SingleOrDefault(c => c.Id == id);
+        //    _cars.Remove(carToDelete);
+        //}
 
+        //public List<Car> GetAll()
+        //{
+        //    return _cars;   
+        //}
 
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            return _cars;
-        }
+        //public List<Car> GetAllByBrand(int brandId)
+        //{
+        //    return _cars.Where(c => c.BrandId == brandId).ToList();
+        //}
 
-        public Car Get(Expression<Func<Car, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
+        //public List<Car> GetAllByColor(int colorId)
+        //{
+        //    return _cars.Where(c => c.ColorId == colorId).ToList();
+        //}
 
-        public void Add(Car car)
-        {
-            if (_cars.SingleOrDefault(p => p.CarId == car.CarId) == null)
-            {
-                _cars.Add(car);
-            }
-            else
-            {
-                throw new WarningException("\nSistemde bu ID ile araç tanımlanmıştır, lütfen başka bir ID seçiniz.\n");
-            }
-        }
-        public void Delete(Car car)
-        {
-            var carToDelete = _cars.SingleOrDefault(p => p.CarId == car.CarId);
-            _cars.Remove(carToDelete);
-        }
+        //public Car GetById(int id)
+        //{
+        //    return _cars.SingleOrDefault(c => c.Id == id);
+        //}
 
-        public List<CarDetailDto> GetCarDetails()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Car car)
-        {
-            var carToUpdate = _cars.SingleOrDefault(p => p.CarId == car.CarId);
-            var properties = car.GetType().GetProperties();
-            foreach (var prop in properties)
-            {
-                if (prop.GetValue(car) != null)
-                {
-                    prop.SetValue(carToUpdate, prop.GetValue(car));
-                }
-            }
-        }
-
-
-        public List<CarDetailDto> GetCarDetails(Expression<Func<CarDetailDto, bool>> filter = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CarDetailDto GetCarDetailsById(Expression<Func<CarDetailDto, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
+        //public void Update(Car car)
+        //{
+        //    Car carToUpdate = _cars.SingleOrDefault(c => c.Id == car.Id);
+        //    carToUpdate.BrandId = car.BrandId;
+        //    carToUpdate.ColorId = car.ColorId;
+        //    carToUpdate.DailyPrice = car.DailyPrice;
+        //    carToUpdate.ModelYear = car.ModelYear;
+        //    carToUpdate.Descriptions = car.Descriptions;
+        //}
     }
 }

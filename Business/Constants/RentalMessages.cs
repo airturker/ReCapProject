@@ -6,10 +6,10 @@ namespace Business.Constants
 {
     public static class RentalMessages
     {
-        public static string RentalAdded = "Rental has been recorded to database";
-        public static string RentalUpdated = "Rental record has been updated";
-        public static string RentalDeleted = "Rental record has been removed from database";
-        public static string RentalListed = "Rental Records";
-        public static string RentalReturnDateError = "Rent operation couldn't be done because of that vehicle is still on another customer";
+        public static string AddedRental = "Araba Kiralama işlemi baraşıyla gerçekleşti.";
+        public static string DeletedRental = "Araba Kiralama işlemi iptal edildi.";
+        public static string UpdatedRental = "Araba Kiralama işlemi güncellendi.";
+        public static string FailedRentalAddOrUpdate = "Bu araba henüz teslim edilmediği için kiralayamazsınız.";
+        public static string ReturnedRental = "Kiraladığınız araç teslim edildi.";
     }
 }

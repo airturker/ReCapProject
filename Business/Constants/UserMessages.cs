@@ -6,9 +6,8 @@ namespace Business.Constants
 {
     public static class UserMessages
     {
-        public static string UserAdded = "Successfully signed up to system";
-        public static string UserUpdated = "Account has been updated";
-        public static string UserDeleted = "User has been removed from the system";
-        public static string UserListed = "Available users in the database";
+        public static string AddedUser = "Kullanıcı başarıyla eklendi.";
+        public static string DeletedUser = "Kullanıcı başarıyla silindi.";
+        public static string UpdatedUser = "Kullanıcı başarıyla güncellendi.";
     }
 }
