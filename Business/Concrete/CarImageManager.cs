@@ -1,87 +1,88 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
+using Core.Utilities.FileHelper;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Business.Concrete
 {
     public class CarImageManager : ICarImageService
     {
-        private ICarImageDal _carImageDal;
-        private int hour = 03;
+        ICarImageDal _carImageDal;
 
         public CarImageManager(ICarImageDal carImageDal)
         {
             _carImageDal = carImageDal;
         }
 
-        public IDataResult<List<CarImage>> GetAllService()
+        public IResult Add(IFormFile file, CarImage carImage)
         {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<List<CarImage>>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(), CarImageMessages.CarImageListed);
-        }
-
-        public IDataResult<CarImage> GetById(int id)
-        {
-            if (DateTime.Now.Hour == hour)
-            {
-                return new ErrorDataResult<CarImage>(GeneralMessages.Maintenance);
-            }
-            return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.CarId == id), CarImageMessages.CarImageListed);
-        }
-
-        public IResult AddService(CarImage entity)
-        {
-            IResult result = BusinessRules.Run(CheckIfTotalImageForCarExceed(entity.CarId));
+            var result = BusinessRules.Run(CheckCarImageLimit(carImage));
 
             if (result != null)
             {
                 return result;
             }
 
-            _carImageDal.Add(entity);
+            carImage.ImagePath = FileHelper.AddAsync(file);
+            carImage.CarImageDate = DateTime.Now;
+            _carImageDal.Add(carImage);
+
             return new SuccessResult(CarImageMessages.CarImageAdded);
         }
 
-        public IResult UpdateService(CarImage entity)
+        public IResult Delete(CarImage carImage)
         {
-            _carImageDal.Update(entity);
-            return new SuccessResult(CarImageMessages.CarImageUpdated);
-        }
+            var oldpath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\wwwroot")) + _carImageDal.Get(I => I.CarImageId == carImage.CarImageId).ImagePath;
 
-        public IResult DeleteService(CarImage entity)
-        {
-            _carImageDal.Delete(entity);
-            return new SuccessResult(CarImageMessages.CarImageDeleted);
-        }
+            var result = BusinessRules.Run(FileHelper.DeleteAsync(oldpath));
 
-        public IDataResult<List<CarImage>> GetAllByCarId(int carId)
-        {
-            string defaultPath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).FullName +
-                                 "\\Assets\\default.png";
-            var query = _carImageDal.GetAll(c => c.CarId == carId);
-            if (query.Count != 0)
+            if (result != null)
             {
-                return new SuccessDataResult<List<CarImage>>(query);
+                return result;
             }
-            return new SuccessDataResult<List<CarImage>>(new List<CarImage>
-                {new CarImage {CarId = carId, ImagePath = defaultPath}});
+
+            _carImageDal.Delete(carImage);
+            return new SuccessResult(CarImageMessages.CarImageDeleted);
+
 
         }
 
-        private IResult CheckIfTotalImageForCarExceed(int carId)
+        public IDataResult<List<CarImage>> GetAll(Expression<Func<CarImage, bool>> filter = null)
         {
-            var result = _carImageDal.GetAll(c => c.CarId == carId).Count;
-            if (result > 5)
+            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(filter));
+        }
+
+        public IDataResult<CarImage> GetById(int id)
+        {
+            return new SuccessDataResult<CarImage>(_carImageDal.Get(I => I.CarImageId == id));
+        }
+
+        public IResult Update(IFormFile file, CarImage carImage)
+        {
+            var oldpath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\wwwroot")) + _carImageDal.Get(p => p.CarImageId == carImage.CarImageId).ImagePath;
+            carImage.ImagePath = FileHelper.UpdateAsync(oldpath, file);
+            carImage.CarImageDate = DateTime.Now;
+            _carImageDal.Update(carImage);
+            return new SuccessResult();
+
+        }
+
+        private IResult CheckCarImageLimit(CarImage carImage)
+        {
+            if (_carImageDal.GetAll(c => c.CarId == carImage.CarId).Count >= 5)
             {
                 return new ErrorResult(CarImageMessages.CarImageLimitExceeded);
             }
@@ -89,13 +90,7 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        //private string GenerateNewPath()
-        //{
-        //    string basePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).FullName;
-        //    string key = Guid.NewGuid().ToString();
-        //    string fullPath = basePath + "\\Assets\\" + key + ".png" ;
-        //    return fullPath;
-        //}
+
 
     }
 }

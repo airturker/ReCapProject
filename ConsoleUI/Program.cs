@@ -126,7 +126,7 @@ namespace ConsoleUI
             Console.WriteLine("Kiralanan Arabalar Listesi: \nId\tCar Name\tCustomer Name\tRent Date\tReturn Date");
             foreach (var rental in rentalManager.GetRentalDetails().Data)
             {
-                Console.WriteLine($"{rental.RentalId}\t{rental.CarName}\t{rental.CustomerName}\t{rental.RentDate}\t{rental.ReturnDate}");
+                Console.WriteLine($"{rental.RentalId}\t{rental.CarName}\t{rental.CompanyName}\t{rental.RentDate}\t{rental.ReturnDate}");
             }
         }
 
@@ -188,7 +188,7 @@ namespace ConsoleUI
             Console.WriteLine("Müşterilerin Listesi: \nId\tKullanıcı Id\tCustomer Name");
             foreach (var customer in customerManager.GetAll().Data)
             {
-                Console.WriteLine($"{customer.CustomerId}\t{customer.UserId}\t{customer.CustomerName}");
+                Console.WriteLine($"{customer.CustomerId}\t{customer.UserId}\t{customer.CompanyName}");
             }
         }
 
@@ -203,7 +203,7 @@ namespace ConsoleUI
             Customer customerForAdd = new Customer
             {
                 UserId = userIdForAdd,
-                CustomerName = customerNameForAdd
+                CompanyName = customerNameForAdd
             };
             customerManager.Add(customerForAdd);
         }

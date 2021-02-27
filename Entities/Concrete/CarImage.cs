@@ -7,18 +7,9 @@ namespace Entities.Concrete
 {
     public class CarImage : IEntity
     {
-        public int Id { get; set; }
+        public int CarImageId { get; set; }
         public int CarId { get; set; }
+        public DateTime CarImageDate { get; set; }
         public string ImagePath { get; set; }
-
-
-        private DateTime dateNow = DateTime.Today;
-
-        public DateTime Date
-        {
-            get { return dateNow; }
-            set { dateNow = value; }
-        }
-
     }
 }
