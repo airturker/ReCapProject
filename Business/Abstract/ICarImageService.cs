@@ -16,7 +16,5 @@ namespace Business.Abstract
         IDataResult<List<CarImage>> GetAll(Expression<Func<CarImage, bool>> filter = null);
         IDataResult<CarImage> GetById(int id);
 
-
-
     }
 }
