@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Business.Constants
@@ -10,5 +11,6 @@ namespace Business.Constants
         public static string DeletedCar = "Araba başarıyla silindi.";
         public static string UpdatedCar = "Araba başarıyla güncellendi.";
         public static string FailedCarAddOrUpdate = "Lütfen günlük fiyat kısmını 0'dan büyük giriniz.";
+        
     }
 }

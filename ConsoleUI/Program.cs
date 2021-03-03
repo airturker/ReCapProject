@@ -8,6 +8,7 @@ using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
+using Core.Entities.Concrete;
 
 namespace ConsoleUI
 {
@@ -177,7 +178,7 @@ namespace ConsoleUI
                 FirstName = userNameForAdd,
                 LastName = userSurnameForAdd,
                 Email = userEmailForAdd,
-                Password = userPasswordForAdd
+                // Password = userPasswordForAdd
 
             };
             userManager.Add(userForAdd);
@@ -213,7 +214,7 @@ namespace ConsoleUI
             Console.WriteLine("Kullanıcı Listesi: \nId\tFirst Name\tLast Name\tEmail\tPassword");
             foreach (var user in userManager.GetAll().Data)
             {
-                Console.WriteLine($"{user.UserId}\t{user.FirstName}\t{user.LastName}\t{user.Password}");
+                Console.WriteLine($"{user.Id}\t{user.FirstName}\t{user.LastName}");
             }
         }
 
