@@ -45,6 +45,11 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(_userDal.Get(c => c.Id == id));
         }
 
+        public IDataResult<User> GetByMail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
