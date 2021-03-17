@@ -93,10 +93,10 @@ namespace WebAPI.Controllers
 
 
         [HttpGet("getcarbycolor")]
-        public IActionResult GetCarByColor(int id)
+        public IActionResult GetCarByColor(int colorId)
         {
 
-            var result = _carService.GetCarDetails(I => I.ColorId == id);
+            var result = _carService.GetCarDetails(I => I.ColorId == colorId);
             if (result.Success)
             {
                 return Ok(result);
@@ -105,10 +105,10 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getcarbybrand")]
-        public IActionResult GetCarByBrand(int id)
+        public IActionResult GetCarByBrand(int brandId)
         {
 
-            var result = _carService.GetCarDetails(I => I.BrandId == id);
+            var result = _carService.GetCarDetails(I => I.BrandId == brandId);
             if (result.Success)
             {
                 return Ok(result);
